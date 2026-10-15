@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- ===== 改这里：页面标题（浏览器标签 + SEO） ===== -->
+<title>你的名字 · 学术主页</title>
+<meta name="description" content="个人学术主页" />
+<style>
+  :root{
+    --text:#24292f;
+    --muted:#57606a;
+    --link:#0969da;
+    --bg:#ffffff;
+    --maxw:760px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",
+           "Hiragino Sans GB","Microsoft YaHei",Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--font); font-size:16px; line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px;}
+  a{color:var(--link); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  /* ---- 头部 ---- */
+  header{padding:56px 0 28px; text-align:center;}
+  .avatar{
+    width:140px; height:140px; border-radius:50%;
+    object-fit:cover; margin:0 auto 18px;
+    border:1px solid #e1e4e8; background:#f3f4f6;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--muted); font-size:13px; overflow:hidden;
+  }
+  header h1{font-size:30px; margin:0 0 6px; font-weight:700;}
+  header .title{color:var(--muted); font-size:16px; margin:0 0 10px;}
+  header .email{font-size:15px; margin:0 0 14px;}
+  .social{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:14.5px;}
+
+  /* ---- 章节 ---- */
+  section{padding:26px 0; border-top:1px solid #eaecef;}
+  h2{font-size:20px; margin:0 0 14px; font-weight:700;}
+  h3{font-size:16px; margin:18px 0 6px; font-weight:700; color:var(--text);}
+  p{margin:0 0 12px;}
+
+  /* ---- 列表通用 ---- */
+  ul.clean{list-style:none; padding:0; margin:0;}
+  ul.clean li{margin:0 0 10px;}
+
+  /* ---- News ---- */
+  .news li{margin-bottom:8px;}
+  .news .date{color:var(--muted); font-weight:600; margin-right:8px;}
+
+  /* ---- Publications ---- */
+  .pub-year{font-weight:700; margin:18px 0 6px; color:var(--text);}
+  .pub{margin:0 0 16px;}
+  .pub .ptitle{font-weight:600;}
+  .pub .pmeta{color:var(--muted); font-size:14.5px; margin:2px 0 4px;}
+  .pub .venue{font-weight:700;}
+  .pub .links a{font-size:13.5px; margin-right:12px;}
+  .corr{color:#bf3989; font-weight:700; vertical-align:super; font-size:.75em;}
+
+  /* ---- Service / Fundings ---- */
+  .svc-label{font-weight:600;}
+  .funding{margin:0 0 14px; padding-left:14px; border-left:3px solid #eaecef;}
+  .funding .fproject{font-weight:600;}
+  .funding .fmeta{color:var(--muted); font-size:14.5px;}
+
+  footer{text-align:center; color:var(--muted); font-size:13px; padding:36px 20px 48px;}
+
+  @media (max-width:480px){ header h1{font-size:25px;} }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="avatar" id="avatar">照片</div>
+  <h1 id="name"></h1>
+  <p class="title" id="title"></p>
+  <p class="email" id="email"></p>
+  <div class="social" id="social"></div>
+</header>
+
+<main class="wrap">
+  <section id="about"><h2>About Me</h2><div id="about-body"></div></section>
+  <section id="news"><h2>News</h2><ul class="clean news" id="news-list"></ul></section>
+  <section id="publications"><h2>Selected Publications</h2><div id="pub-body"></div></section>
+  <section id="service"><h2>Professional Service</h2><div id="service-body"></div></section>
+  <section id="fundings"><h2>Fundings</h2><div id="funding-body"></div></section>
+  <section id="contact"><h2>Contact</h2><div id="contact-body"></div></section>
+</main>
+
+<footer>
+  © <span id="year"></span> <span id="foot-name"></span> · Powered by a single-config template
+</footer>
+
+<!--
+====================================================================
+  只改下面这一个 SITE 对象即可，页面会自动渲染。
+  每条都有中文注释，照着填就行。
+==================================================================== -->
+<script>
+const SITE = {
+  /* 基本信息 */
+  name:   "你的名字",                       // 姓名
+  title:  "职位/头衔 · 所属机构",            // 例如：Ph.D. Candidate · XX University
+  avatar: "assets/avatar.jpg",             // 头像路径（放进 assets/ 文件夹）
+  email:  "you@example.com",               // 邮箱
+
+  /* 头部社交链接（把 # 换成你的真实地址） */
+  links: {
+    scholar: "https://scholar.google.com/citations?user=ZrIx83IAAAAJ&hl=zh-CN",
+    cv:      "assets/cv.pdf",              // 简历 PDF（放进 assets/）
+    github:  "https://github.com/",
+    orcid:   "https://orcid.org/"
+  },
+
+  /* 关于我：支持多段，用数组写每一段 */
+  about: [
+    "在这里写第一段的自我介绍：你的学术背景、所在团队、研究视角。",
+    "第二段可以写你最想解决的 1–2 个科学问题，以及当前进展。"
+  ],
+
+  /* 研究兴趣（可选，会作为项目符号列出） */
+  research: [
+    "研究方向一（例如：机器学习与数据挖掘）",
+    "研究方向二（例如：多视图聚类）",
+    "研究方向三（例如：时间序列预测）"
+  ],
+
+  /* 新闻动态：按时间倒序，date 用 [2026-09] 这种格式 */
+  news: [
+    { date: "2026-09", text: "一篇论文被 XX 会议录用（占位）。" },
+    { date: "2026-06", text: "受邀担任 XX 会议审稿人 / Area Chair（占位）。" },
+    { date: "2025-12", text: "获得 XX 奖学金 / 奖项（占位）。" }
+  ],
+
+  /* 精选论文：每年一组，按时间倒序。
+     作者里 self:true 的会被加粗；corr:true 的是通讯作者（标 *）。
+     links 里不需要的删掉即可。 */
+  publications: [
+    {
+      year: 2026,
+      title: "示例论文标题：A Study on Something Interesting（占位，请替换）",
+      authors: [
+        { name: "你的名字", self: true, corr: true },
+        { name: "合作者A" },
+        { name: "合作者B", corr: true }
+      ],
+      venue: "NeurIPS 2026 (CCF A)",
+      links: { pdf: "#", code: "#", doi: "#" }
+    },
+    {
+      year: 2025,
+      title: "示例论文标题：Another Great Paper（占位，请替换）",
+      authors: [
+        { name: "合作者A" },
+        { name: "你的名字", self: true },
+        { name: "合作者B" }
+      ],
+      venue: "ICML 2025 (CCF A)",
+      links: { pdf: "#", code: "#" }
+    }
+  ],
+
+  /* 学术服务 */
+  service: {
+    conference: [
+      "Reviewer, NeurIPS / ICML / ICLR (占位)",
+      "Area Chair, XX 会议 (占位)"
+    ],
+    journal: [
+      "Reviewer, IEEE TPAMI / TKDE (占位)"
+    ]
+  },
+
+  /* 基金 / 项目（Fundings 占位，按需要增删） */
+  fundings: [
+    {
+      period: "2025–2028",
+      role:   "PI / 负责人",
+      project:"国家自然科学基金青年项目：示例项目名称（占位）",
+      source: "NSFC"
+    },
+    {
+      period: "2024–2026",
+      role:   "Co-PI / 参与",
+      project:"省部级重点实验室开放课题：示例项目名称（占位）",
+      source: "省科技厅"
+    }
+  ]
+};
+
+/* ============ 以下为渲染逻辑，一般无需改动 ============ */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+
+  // 头部
+  $("name").textContent = SITE.name;
+  $("foot-name").textContent = SITE.name;
+  $("title").textContent = SITE.title;
+  $("email").innerHTML = '✉ <a href="mailto:' + SITE.email + '">' + SITE.email + '</a>';
+
+  const av = $("avatar");
+  av.textContent = "";
+  const img = new Image();
+  img.src = SITE.avatar;
+  img.alt = SITE.name;
+  img.onerror = () => { av.textContent = "照片"; };
+  av.appendChild(img);
+
+  const social = $("social");
+  const mk = (href, label) => {
+    const a = document.createElement("a");
+    a.href = href; a.target = "_blank"; a.rel = "noopener"; a.textContent = label;
+    return a;
+  };
+  if (SITE.links.scholar) social.appendChild(mk(SITE.links.scholar, "Google Scholar"));
+  if (SITE.links.cv)      social.appendChild(mk(SITE.links.cv, "CV"));
+  if (SITE.links.github)  social.appendChild(mk(SITE.links.github, "GitHub"));
+  if (SITE.links.orcid)   social.appendChild(mk(SITE.links.orcid, "ORCID"));
+
+  // About
+  const ab = $("about-body");
+  (SITE.about || []).forEach(p => {
+    const el = document.createElement("p"); el.textContent = p; ab.appendChild(el);
+  });
+  if (SITE.research && SITE.research.length) {
+    const h = document.createElement("h3"); h.textContent = "Research Interests"; ab.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "clean";
+    SITE.research.forEach(r => {
+      const li = document.createElement("li"); li.textContent = r; ul.appendChild(li);
+    });
+    ab.appendChild(ul);
+  }
+
+  // News
+  const nl = $("news-list");
+  (SITE.news || []).forEach(n => {
+    const li = document.createElement("li");
+    const d = document.createElement("span"); d.className = "date"; d.textContent = "[" + n.date + "]";
+    li.appendChild(d); li.appendChild(document.createTextNode(n.text));
+    nl.appendChild(li);
+  });
+
+  // Publications（按年份倒序分组）
+  const pb = $("pub-body");
+  const byYear = {};
+  (SITE.publications || []).forEach(p => { (byYear[p.year] = byYear[p.year] || []).push(p); });
+  Object.keys(byYear).map(Number).sort((a, b) => b - a).forEach(year => {
+    const y = document.createElement("div"); y.className = "pub-year"; y.textContent = year;
+    pb.appendChild(y);
+    byYear[year].forEach(p => {
+      const div = document.createElement("div"); div.className = "pub";
+      const t = document.createElement("div"); t.className = "ptitle"; t.textContent = p.title; div.appendChild(t);
+
+      const meta = document.createElement("div"); meta.className = "pmeta";
+      const authStr = p.authors.map(a => {
+        let s = a.name;
+        if (a.self) s = "<b>" + s + "</b>";
+        if (a.corr) s += '<span class="corr">*</span>';
+        return s;
+      }).join(", ");
+      meta.innerHTML = authStr + '. <span class="venue">' + p.venue + '</span>.';
+      div.appendChild(meta);
+
+      if (p.links) {
+        const links = document.createElement("div"); links.className = "links";
+        ["pdf", "code", "doi"].forEach(k => {
+          if (p.links[k]) {
+            const a = mk(p.links[k], k.toUpperCase());
+            links.appendChild(a);
+          }
+        });
+        div.appendChild(links);
+      }
+      pb.appendChild(div);
+    });
+  });
+
+  // Service
+  const sb = $("service-body");
+  const svc = (label, items) => {
+    if (!items || !items.length) return;
+    const h = document.createElement("h3"); h.textContent = label; sb.appendChild(h);
+    const ul = document.createElement("ul"); ul.className = "clean";
+    items.forEach(i => { const li = document.createElement("li"); li.textContent = i; ul.appendChild(li); });
+    sb.appendChild(ul);
+  };
+  svc("Conference Service", SITE.service.conference);
+  svc("Journal Service", SITE.service.journal);
+
+  // Fundings
+  const fb = $("funding-body");
+  (SITE.fundings || []).forEach(f => {
+    const d = document.createElement("div"); d.className = "funding";
+    const p1 = document.createElement("div"); p1.className = "fproject"; p1.textContent = f.project; d.appendChild(p1);
+    const p2 = document.createElement("div"); p2.className = "fmeta";
+    p2.textContent = [f.period, f.role, f.source].filter(Boolean).join(" · ");
+    d.appendChild(p2);
+    fb.appendChild(d);
+  });
+
+  // Contact
+  const cb = $("contact-body");
+  cb.innerHTML =
+    '<p>Email: <a href="mailto:' + SITE.email + '">' + SITE.email + '</a></p>' +
+    '<p>Office: 楼宇 / 房间号（占位）<br>' +
+    'Address: 城市，邮编（占位）</p>';
+})();
+</script>
+</body>
+</html>
